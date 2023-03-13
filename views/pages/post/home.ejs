@@ -1,0 +1,178 @@
+<div>
+
+    <%- partial('../../partials/navbar.ejs') %>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        <style>
+            [v-cloak] {
+                display: none;
+            }
+
+            .modal-container {
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                position: fixed;
+                padding-top: 200px;
+                background-color: rgba(0, 0, 0, 0.8)
+            }
+
+            .modal-form {
+                margin: auto;
+                background-color: white;
+                width: 50%;
+                padding: 16px;
+                border-radius: 5px
+            }
+
+            .blue {
+                background-color: dodgerblue;
+            }
+
+            .red {
+                background-color: red;
+            }
+
+            .gray {
+                background-color: darkgray
+            }
+
+            .center-cropped {
+                object-position: center;
+                /* Center the image within the element */
+                object-fit: cover;
+                width: 50px;
+                height: 50px;
+                border-radius: 100px;
+                border: solid 1px rgb(94, 94, 94);
+            }
+        </style>
+        
+   
+      
+        <div id="app" v-cloak>
+
+            <!-- modal container -->
+            <div v-if="shouldShowDeleteConfirmation" class="modal-container">
+                <div class="modal-form">
+                    <div>
+                        Are you sure you want to delete?
+                    </div>
+
+                    <div style="margin-top: 16px; display: flex">
+                        <div style="flex: 1"></div>
+                        <button v-on:click="shouldShowDeleteConfirmation = false">Cancel</button>
+                        <button v-on:click="confirmDelete()" v-bind:class="[isDeletingPost ? 'gray' : 'red']" style="color: white; 
+                        margin-left: 16px;">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- post modal container -->
+            <div v-if='shouldShowPostForm' class="modal-container">
+                <div class="modal-form">
+                    <div>
+                        Create Post
+                    </div>
+                    <!-- v-model is used to bidirectionally bind a state variable to an input -->
+                    <textarea style="height: 20%; width: 70%; 
+                    border: solid 1px darkgray; margin: 12px 0px;
+                    border-radius: 5px; font-size: 14px;
+                    padding: 12px" v-model="postBodyText" placeholder="Enter post body here"></textarea>
+                    <input v-on:change="handleFileChange" type="file">
+                    <img style="max-width: 70%; max-height: 70%; margin-top: 12px" :src="postFileImageSource">
+                    <div style="display: flex; margin-top: 16px">
+                        <div style="flex: 1"></div>
+                        <button v-on:click="shouldShowPostForm = false" class="cancel">Cancel</button>
+                        <button :disabled="isCreatingPost"
+                            style="color: white; border-radius: 5px; border: solid 1px; margin-left: 12px"
+                            v-bind:class="isCreatingPost ? 'gray' : 'blue'" v-on:click="createPost()">
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button v-on:click="shouldShowPostForm = true" style="width: 100%; background-color: white; 
+                border: solid 1px white; height: 34px;
+                font-weight: bold; font-size: 14px; border-radius: 5px;
+                margin-bottom: 16px">Create Post</button>
+
+
+
+            <div v-for="p in posts">
+                <%- partial('../../partials/post.ejs') %>
+            </div>
+
+        </div>
+
+        <%- exposeLocalsToBrowser({keys: ['allPosts']}) %>
+
+            <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+            <script>
+                const App = new Vue({
+                    el: '#app',
+                    data: {
+                        posts: window.SAILS_LOCALS.allPosts,
+                        shouldShowDeleteConfirmation: false,
+                        selectedPostToDelete: null,
+                        isDeletingPost: false,
+
+                        // Post creation State variables
+                        isCreatingPost: false,
+                        postBodyText: null,
+                        postFileImageSource: null,
+                        selectedFile: null,
+                        shouldShowPostForm: false,
+                    },
+                    methods: {
+                        createPost: async function () {
+                            // Before sending our POST request, we create FormData with postBody 
+                            // and imagefile for the server to consume
+                            const formData = new FormData()
+                            formData.append("postBody", this.postBodyText)
+                            formData.append('imagefile', this.selectedFile)
+                            this.isCreatingPost = true
+                            try {
+                                await axios.post('/post', formData)
+                                location.reload()
+                            } catch (err) {
+                                this.isCreatingPost = false
+                                console.error(err.toString())
+                            }
+                        },
+                        // when file selection happens, keep track of selectedFile
+                        handleFileChange: function (event) {
+                            this.selectedFile = event.target.files[0]
+                            this.postFileImageSource = window.URL.createObjectURL(this.selectedFile)
+                        },
+
+                        confirmDelete: async function () {
+                            const postId = this.selectedPostToDelete.id
+
+                            try {
+                                this.isDeletingPost = true
+                                await axios.delete(`/post/${postId}`)
+                                this.shouldShowDeleteConfirmation = false
+                                this.posts = this.posts.filter(p => {
+                                    return p.id != this.selectedPostToDelete.id
+                                })
+                                this.isDeletingPost = false
+                            } catch (err) {
+                                this.isDeletingPost = false
+                                console.error(err.toString())
+                            }
+                        },
+                        deletePost: async function (post) {
+                            this.selectedPostToDelete = post
+                            this.shouldShowDeleteConfirmation = true
+
+                            return
+                        }
+                    }
+                })
+            </script>
+
+</div>

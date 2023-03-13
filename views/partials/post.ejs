@@ -1,0 +1,40 @@
+<div style='background-color: white; padding: 16px;
+            margin-bottom: 12px;
+            display: flex; flex-direction: column'>
+
+    <div style="display: flex; margin-bottom: 16px">
+        <img class="center-cropped" :src="p.user.profileImageUrl"
+            style="margin-right: 12px">
+
+        <div style="display: flex; flex-direction: column; justify-content: center">
+            <div style="font-weight: bold; margin-bottom: 4px; font-size: 16px">
+                    {{p.user.fullName}}
+                </div>
+            <div style="font-size: 13px; color: rgb(128, 128, 128)">
+                Posted {{p.fromNow}}
+            </div>
+        </div>
+        
+    </div>
+    
+
+    <!-- <div style="color: rgb(157, 157, 157); margin-bottom: 4px; font-size: 12px">
+        {{ new Date(p.createdAt).toLocaleTimeString() 
+        + " "  + new Date(p.createdAt).toLocaleDateString()}}
+    </div> -->
+
+
+    <div style="margin-bottom: 12px">
+        {{p.text}}
+    </div>
+
+    <div>
+        <img style="max-width: 100%; margin-bottom: 12px" :src="p.imageUrl">
+    </div>
+
+    <a :href="'/post/' + p.id" style="margin-bottom: 12px;">Comment</a>
+    
+
+    <button v-if="p.canDelete" v-on:click="deletePost(p)">Delete Post</button>
+
+</div>

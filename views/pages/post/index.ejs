@@ -1,0 +1,86 @@
+<div>
+
+    <style>
+        .center-cropped {
+            object-position: center;
+             /* Center the image within the element */
+            object-fit: cover;
+            width: 50px;
+            height: 50px;
+            border-radius: 100px;
+            border: solid 1px rgb(94, 94, 94);
+        }
+    </style>
+
+    <%- exposeLocalsToBrowser({keys: ['post']}) %>
+
+        <%- partial('../../partials/navbar.ejs') %>
+            <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+            <div id="app" style="padding: 24px;">
+                
+                <div v-for="p in [post]">
+                    <%- partial('../../partials/post.ejs') %>
+                </div>
+
+               <!--<form>--> 
+                    <textarea v-model="postText"
+                     name="text" style="width: 100%; padding: 16px; font-size: 14px;"
+                      placeholder="Enter Comment"> </textarea>
+
+                        <div style="display: flex;">
+                            <div style="flex: 1;"></div>
+                            <button v-on:click="handleSubmit" style="background-color: dodgerblue;
+                            padding: 8px; margin-top: 8px; color: white; font-weight: bold;">Submit Comment</button>
+                        </div>
+                   
+              <!--</form>-->
+
+                <div v-for="c in post.comments"
+                style="background-color: white; padding: 16px; margin-bottom: 16px;">
+
+                <div style="display: flex;">
+                    <img class="center-cropped" :src="c.user.profileImageUrl">
+                    <div style="margin-left: 16px; justify-content: center;">
+                        <div style="font-weight: bold;">
+                            {{c.user.fullName}}
+                        </div>
+                        <div>
+                            Posted {{c.fromNow}}
+                        </div>
+                
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 16px;">
+                    {{c.text}}
+                </div>
+
+                </div>
+
+            </div>
+
+            <script>
+                const app = new Vue({
+                    el: "#app",
+                    data: {
+                        message: "vUE START",
+                        post: window.SAILS_LOCALS.post,
+                        postText: null
+                    },
+                    methods: {
+                        handleSubmit: async function() {
+                            console.log(this.postText)
+
+                            const formData = new FormData()
+                            formData.append('text', this.postText)
+                            const response = await axios.post('/comment/post/' + this.post.id, 
+                            formData)
+                            location.reload()
+                        }
+                    }
+                })
+            </script>
+
+</div>

@@ -1,0 +1,74 @@
+<style>
+    .following {
+        background-color: black;
+        color: white;
+    }
+
+    .not-following {
+        background-color: white;
+        color: black;
+    }
+</style>
+
+<div>
+
+    <%- partial('../../partials/navbar.ejs') %>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        <%- exposeLocalsToBrowser({keys: ['users']}) %>
+
+            <div id="app" style="padding: 16px ;">
+                <div v-for="u in users" style="background-color: white; margin-bottom: 16px;
+             padding: 16px;" v-bind:key="u.id">
+
+                    <a :href="'/user/' + u.id">
+                        {{u.fullName}}
+                    </a>
+
+                    <div>
+                        {{u.emailAddress}}
+                    </div>
+
+                    <div style="margin-top: 16px;">
+                        <button v-on:click="follow(u)" v-bind:class="u.isFollowing ? 'following' : 'not-following'">
+                            {{u.isFollowing ? 'Unfollow' : 'Follow'}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                const allUsers = window.SAILS_LOCALS.users
+
+                const App = new Vue({
+                    el: "#app",
+                    data: {
+                        message: "Hello FROM ",
+                        users: allUsers
+                    },
+                    methods: {
+                        follow: async function (user) {
+
+                            if (user.isFollowing) {
+                                await axios.post('/unfollow/' + user.id)
+                            } else {
+                                await axios.post('/follow/' + user.id)
+                            }
+
+                            const originalId = user.id
+                            user.id = "TEMP"
+                            // eğer kullanıcı daha önceden takip ediliyorsa bu satır
+                            // kullanıcının artık takip edilmediğini belirtecektir ve 
+                            // tersi durumda da aynı şekilde gerçekleşir
+                            // yani anlık olarak butonun follow ya da unfollow olmasını
+                            // ve bu anki değerlerini tutmasını sağlar
+                            user.isFollowing = !user.isFollowing
+                            user.id = originalId
+
+
+                        }
+                    }
+                }) 
+            </script>
+</div>

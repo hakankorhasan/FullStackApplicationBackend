@@ -1,0 +1,74 @@
+<div>
+
+    <%- exposeLocalsToBrowser({keys: ['user']}) %>
+
+        <%- partial('../../partials/navbar.ejs') %>
+            <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+            <div id="app" style="max-width: 100%; padding: 24px;">
+
+                <div style="font-weight: bold; margin-bottom: 8px">
+                    User Information
+                </div>
+                <div style="margin-bottom: 24px; background-color: white; padding: 16px">
+                    <div>
+                        {{user.fullName}}
+                    </div>
+                    <div>
+                        {{user.emailAddress}}
+                    </div>
+                </div>
+
+                <div style="display: flex; flex: 1">
+                    <div style='flex: 1; margin-right: 24px'>
+                        <div style="font-weight: bold; margin-bottom: 8px">
+                            Currently Following
+                        </div>
+                        <div v-for="u in user.following"
+                            style="background-color: white; margin-bottom: 16px; padding: 16px">
+                            <div>
+                                {{u.fullName}}
+                            </div>
+                            <div>
+                                {{u.emailAddress}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style='flex: 1'>
+                        <div style="font-weight: bold; margin-bottom: 8px">
+                            Followers
+                        </div>
+                        <div v-for="u in user.followers"
+                            style="background-color: white; margin-bottom: 16px; padding: 16px">
+                            <div>
+                                {{u.fullName}}
+                            </div>
+                            <div>
+                                {{u.emailAddress}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="font-weight: bold; margin-bottom: 16px;">
+                    Post
+                </div>
+
+                <div v-for="p in user.posts">
+                    <%- partial('../../partials/post') %>
+                </div>
+
+            </div>
+
+            <script>
+                const app = new Vue({
+                    el: '#app',
+                    data: {
+                        message: 'Hello from VUE',
+                        user: window.SAILS_LOCALS.user
+                    }
+                })
+            </script>
+
+</div>
