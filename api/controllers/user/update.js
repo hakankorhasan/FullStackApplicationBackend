@@ -4,7 +4,6 @@ module.exports = async function(req, res) {
     const bio = req.body.bio
 
     const file = req.file('imagefile')
-    console.log(file)
 
     if (file.isNoop) {
         await User.update({id: req.session.userId})

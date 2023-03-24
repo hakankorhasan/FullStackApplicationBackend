@@ -8,6 +8,8 @@
  * https://sailsjs.com/anatomy/config/routes-js
  */
 
+
+
 module.exports.routes = {
 
   //  ╦ ╦╔═╗╔╗ ╔═╗╔═╗╔═╗╔═╗╔═╗
@@ -84,11 +86,12 @@ module.exports.routes = {
   'POST /follow/:id': 'user/follow',
   'POST /unfollow/:id': 'user/unfollow',
   'GET /profile': 'user/profile',
+  'DELETE /destroy': 'user/destroy',
   'GET /user/:id': 'user/publicprofile',
 
-  //'/auth/google': { controller: 'authController', action: 'google' },
-  '/auth/google': { controller: 'AuthController', action: 'google' },
-
+  //'GET /api/v1/auth/google':                {controller: 'PassportController', action: 'googleAuth'},
+  //'GET /api/v1/auth/google/callback':       {controller: 'PassportController', action: 'googleCallback'},
+  
   'POST /profile': 'user/update',
   
   'GET /customauth/login': {

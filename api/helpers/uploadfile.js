@@ -33,6 +33,13 @@ module.exports = {
       file.upload(options, async (err, files) => {
         if (err) { return res.serverError(err.toString())}
 
+        if (files && files.length > 0 && files[0].extra && files[0].extra.Location) {
+          const fileUrl = files[0].extra.Location;
+          // işlemlere devam et
+        } else {
+          console.log("Dosya bilgileri alınamadı.");
+        }
+
         const fileUrl = files[0].extra.Location     
         return exits.success(fileUrl)
       })

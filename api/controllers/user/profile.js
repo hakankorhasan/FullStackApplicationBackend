@@ -1,22 +1,5 @@
 module.exports = async function(req, res) {
 
-   /* const userId = req.session.userId
-    const allPosts = []
-
-    const feedItems = await FeedItem.find({user: userId})
-    .sort('postCreatedAt DESC')
-    .populate('post')
-
-    feedItems.forEach(fi => {
-        if(fi.post) {
-            fi.post.canDelete = fi.post.user.id == req.session.userId
-            fi.post.hasLiked = fi.hasLiked
-            allPosts.push(fi.post)
-        }
-    });
-
-    return res.send(allPosts)*/
-
     const currentUser = await User.findOne({id: req.session.userId})
         .populate('following').populate('followers')
 

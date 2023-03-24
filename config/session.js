@@ -27,19 +27,6 @@ module.exports.session = {
   adapter: 'connect-mongodb-session',
   url: 'mongodb://hakan:hakan123@ac-kuiiypt-shard-00-00.goiw06h.mongodb.net:27017,ac-kuiiypt-shard-00-01.goiw06h.mongodb.net:27017,ac-kuiiypt-shard-00-02.goiw06h.mongodb.net:27017/fullstack?ssl=true&replicaSet=atlas-7ktgwe-shard-0&authSource=admin&retryWrites=true&w=majority',
   collection: 'sessions'
-  /***************************************************************************
-  *                                                                          *
-  * Customize when built-in session support will be skipped.                 *
-  *                                                                          *
-  * (Useful for performance tuning; particularly to avoid wasting cycles on  *
-  * session management when responding to simple requests for static assets, *
-  * like images or stylesheets.)                                             *
-  *                                                                          *
-  * https://sailsjs.com/config/session                                       *
-  *                                                                          *
-  ***************************************************************************/
-  // isSessionDisabled: function (req){
-  //   return !!req.path.match(req._sails.LOOKS_LIKE_ASSET_RX);
-  // },
+ 
 
 };
