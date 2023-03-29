@@ -1,7 +1,9 @@
 module.exports = async function(req ,res) {
 
+    const fullName = req.query.fullName;
     const users = await User.find({
-        id: {'!=': req.session.userId} 
+        id: {'!=': req.session.userId},
+        fullName: {'contains': fullName}
     })
 
     const currentUser = await User.findOne({id: req.session.userId})
@@ -18,7 +20,9 @@ module.exports = async function(req ,res) {
     })
 
     const sanitizedUsers = users.map(u => {
-        return {id: u.id, fullName: u.fullName,
+        return {
+            id: u.id,
+            fullName: u.fullName,
             profileImageUrl: u.profileImageUrl,
             emailAddress: u.emailAddress,
             isFollowing: u.isFollowing
